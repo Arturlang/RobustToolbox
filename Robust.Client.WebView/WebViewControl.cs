@@ -121,6 +121,15 @@ namespace Robust.Client.WebView
             _controlImpl.Resized();
         }
 
+        protected internal override void UIScaleChanged()
+        {
+            base.UIScaleChanged();
+
+            // The browser's cached device scale factor must be refreshed, or it keeps
+            // rendering at the old scale into a texture sized for the new one.
+            _controlImpl.Resized();
+        }
+
         protected internal override void Draw(DrawingHandleScreen handle)
         {
             base.Draw(handle);

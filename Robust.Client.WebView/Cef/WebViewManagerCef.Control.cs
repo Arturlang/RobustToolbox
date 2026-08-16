@@ -402,6 +402,11 @@ namespace Robust.Client.WebView.Cef
                     return;
 
                 _data.Browser.GetHost().NotifyMoveOrResizeStarted();
+                // CEF caches the DeviceScaleFactor from GetScreenInfo at browser creation.
+                // If the control was created before being parented/laid out (UIScale 1.0),
+                // the browser keeps painting at the stale scale into a texture sized with
+                // the real scale, leaving part of the control blank. Force a re-query.
+                _data.Browser.GetHost().NotifyScreenInfoChanged();
                 _data.Browser.GetHost().WasResized();
                 _data.Texture.Dispose();
                 _data.Texture = _clyde.CreateBlankTexture<Rgba32>((Owner.PixelWidth, Owner.PixelHeight));
