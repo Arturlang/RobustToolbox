@@ -1130,10 +1130,17 @@ namespace Robust.Client.Graphics.Clyde
             switch (blend)
                 {
                     case ShaderBlendMode.Add:
-                        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);
+                        // Additive blending must not scale by alpha here: the shader
+                        // premultiplies straight sources itself, and render-target
+                        // sources are already premultiplied. Scaling by source alpha
+                        // per composite made every RT hop dim additive content, and a
+                        // DstAlpha destination factor destroyed accumulated content
+                        // wherever the target's alpha was below 1.
+                        GL.BlendFuncSeparate(BlendingFactorSrc.One, BlendingFactorDest.One, BlendingFactorSrc.One, BlendingFactorDest.One);
                         break;
                     case ShaderBlendMode.Subtract:
-                        GL.BlendFuncSeparate(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.DstAlpha, BlendingFactorSrc.Zero, BlendingFactorDest.DstAlpha);
+                        // Same reasoning as Add; the destination's alpha is preserved.
+                        GL.BlendFuncSeparate(BlendingFactorSrc.One, BlendingFactorDest.One, BlendingFactorSrc.Zero, BlendingFactorDest.One);
                         GL.BlendEquation(BlendEquationMode.FuncReverseSubtract);
                         break;
                     case ShaderBlendMode.Multiply:
