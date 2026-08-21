@@ -353,9 +353,44 @@ namespace Robust.Client.UserInterface.Controls
         public void Sort(Comparison<Item> comparison) => _itemList.Sort(comparison);
 
 
+        /// <summary>
+        ///     Scrolls so that the first selected item is inside the visible area.
+        ///     Call after moving the selection by keyboard, or the selection walks
+        ///     out of view while the list stays put.
+        /// </summary>
         public void EnsureCurrentIsVisible()
         {
-            // TODO: Implement this.
+            // Mirrors the metrics in RecalculateContentHeight so the offsets agree
+            // with what Draw lays out.
+            var offset = 0f;
+            foreach (var item in _itemList)
+            {
+                var itemHeight = 0f;
+                if (item.Icon != null)
+                {
+                    itemHeight = item.IconSize.Y * item.IconScale;
+                }
+
+                itemHeight = Math.Max(itemHeight, ActualFont.GetHeight(UIScale));
+                itemHeight += ActualItemBackground.MinimumSize.Y * UIScale;
+
+                if (item.Selected)
+                {
+                    if (offset < _scrollBar.Value)
+                    {
+                        _scrollBar.Value = offset;
+                    }
+                    else if (offset + itemHeight > _scrollBar.Value + _scrollBar.Page)
+                    {
+                        _scrollBar.Value = offset + itemHeight - _scrollBar.Page;
+                    }
+
+                    _isAtBottom = _scrollBar.IsAtEnd;
+                    return;
+                }
+
+                offset += itemHeight + ItemSeparation;
+            }
         }
 
         public int GetItemAtPosition(Vector2 position, bool exact = false)
