@@ -202,6 +202,11 @@ namespace Robust.Client.WebView.Cef
 
                 _data = new LiveData(texture, client, browser, renderer);
                 _manager._activeControls.Add(this);
+
+                // The control can already hold focus by the time its browser exists,
+                // and FocusEntered would have had nothing to tell at that point.
+                if (Owner.HasKeyboardFocus())
+                    browser.GetHost().SetFocus(true);
             }
 
             public void CloseBrowser()
@@ -509,12 +514,20 @@ namespace Robust.Client.WebView.Cef
 
             public void FocusEntered()
             {
+                // Tell CEF the page is focused, not just the OS window. Without this
+                // the renderer never considers itself focused, so a clicked <input>
+                // gets no blinking caret and no :focus styling even though clicks and
+                // typing are delivered normally.
+                _data?.Browser.GetHost().SetFocus(true);
+
                 if (_textInputActive)
                     Owner.Root?.Window?.TextInputStart();
             }
 
             public void FocusExited()
             {
+                _data?.Browser.GetHost().SetFocus(false);
+
                 if (_textInputActive)
                     Owner.Root?.Window?.TextInputStop();
             }
