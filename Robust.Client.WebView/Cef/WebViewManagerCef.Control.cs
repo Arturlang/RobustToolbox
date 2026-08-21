@@ -181,7 +181,7 @@ namespace Robust.Client.WebView.Cef
 
                 // A funny web cef client. This can actually be shared by multiple browsers, but I'm not sure how the
                 // rendering would work in that case? TODO CEF: Investigate a way to share the web client?
-                var client = new RobustCefClient(renderer, _requestHandler, new RobustLoadHandler());
+                var client = new RobustCefClient(renderer, _requestHandler, new RobustLoadHandler(), new ControlDisplayHandler(Owner));
 
                 var info = CefWindowInfo.Create();
 

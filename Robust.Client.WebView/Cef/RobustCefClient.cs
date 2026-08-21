@@ -8,16 +8,19 @@ namespace Robust.Client.WebView.Cef
         private readonly CefRenderHandler _renderHandler;
         private readonly CefRequestHandler _requestHandler;
         private readonly CefLoadHandler _loadHandler;
+        private readonly CefDisplayHandler? _displayHandler;
 
-        internal RobustCefClient(CefRenderHandler handler, CefRequestHandler requestHandler, CefLoadHandler loadHandler)
+        internal RobustCefClient(CefRenderHandler handler, CefRequestHandler requestHandler, CefLoadHandler loadHandler, CefDisplayHandler? displayHandler = null)
         {
             _renderHandler = handler;
             _requestHandler = requestHandler;
             _loadHandler = loadHandler;
+            _displayHandler = displayHandler;
         }
 
         protected override CefRenderHandler GetRenderHandler() => _renderHandler;
         protected override CefRequestHandler GetRequestHandler() => _requestHandler;
         protected override CefLoadHandler GetLoadHandler() => _loadHandler;
+        protected override CefDisplayHandler? GetDisplayHandler() => _displayHandler;
     }
 }
