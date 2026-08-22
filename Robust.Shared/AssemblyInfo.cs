@@ -13,6 +13,9 @@
 [assembly: InternalsVisibleTo("Robust.Client.WebView")]
 [assembly: InternalsVisibleTo("Robust.Packaging")]
 [assembly: InternalsVisibleTo("Robust.Shared.Tests")]
+// OpenDream mounts DM font resources into the VFS at runtime so maptext can use the
+// families the skin names; FontResource only ever reads from content roots.
+[assembly: InternalsVisibleTo("OpenDreamClient")]
 [assembly: InternalsVisibleTo("Robust.Server.IntegrationTests")]
 [assembly: InternalsVisibleTo("Robust.Server.Testing")]
 [assembly: InternalsVisibleTo("Robust.Shared.Testing")]
