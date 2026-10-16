@@ -122,6 +122,7 @@ namespace Robust.Server.Console
         }
 
         private (Task task, CancellationTokenSource cts, Channel<string> chan)? _rdLine = null;
+        private bool _inputClosed;
 
         public void UpdateInput()
         {
@@ -131,10 +132,16 @@ namespace Robust.Server.Console
                 return;
             }
 
+            if (_inputClosed)
+                return;
+
             if (_rdLine.HasValue) // Already running, check the channel.
             {
-                if (_rdLine.Value.chan.Reader.TryRead(out var cmd))
+                var (readTask, _, readChan) = _rdLine.Value;
+                if (readChan.Reader.TryRead(out var cmd))
                     _conShell.ExecuteCommand(cmd);
+                else if (readTask.IsCompleted)
+                    _inputClosed = true; // Input ended and every command has run; stop polling for good
 
                 return;
             }
@@ -158,7 +165,11 @@ namespace Robust.Server.Console
                                 .ReadLineAsync()
                                 .WaitAsync(TimeSpan.FromSeconds(2.0), rlc.Token);
 
-                            await chan.Writer.WriteAsync(str!, rlc.Token);
+                            // End of input (stdin redirected from nothing): there will never be a command
+                            if (str == null)
+                                break;
+
+                            await chan.Writer.WriteAsync(str, rlc.Token);
                         }
                     },
                     rlc.Token
