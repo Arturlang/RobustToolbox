@@ -45,7 +45,8 @@ namespace Robust.Shared.Log
 
         private readonly StringBuilder _line = new(1024);
 
-        private readonly Timer _timer = new(0.1);
+        // Milliseconds: 0.1 here fired roughly every millisecond, keeping a thread pool worker busy flushing
+        private readonly Timer _timer = new(100);
 
         private bool _disposed;
 
