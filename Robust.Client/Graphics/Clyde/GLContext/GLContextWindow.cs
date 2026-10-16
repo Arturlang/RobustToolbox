@@ -177,7 +177,8 @@ namespace Robust.Client.Graphics.Clyde
                 {
                     foreach (var window in _windowData.Values)
                     {
-                        if (window.Reg.IsMainWindow)
+                        // Each swap waits for a vblank; a hidden window would hold the whole frame for nothing
+                        if (window.Reg.IsMainWindow || !window.Reg.IsVisible)
                             continue;
 
                         window.BlitDoneEvent!.Reset();
@@ -190,7 +191,7 @@ namespace Robust.Client.Graphics.Clyde
                 {
                     foreach (var window in _windowData.Values)
                     {
-                        if (window.Reg.IsMainWindow)
+                        if (window.Reg.IsMainWindow || !window.Reg.IsVisible)
                             continue;
 
                         Clyde._windowing!.GLMakeContextCurrent(window.Reg);

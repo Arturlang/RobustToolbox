@@ -141,7 +141,8 @@ internal sealed partial class UserInterfaceManager
 
             foreach (var root in _roots)
             {
-                if (root.Window != _clyde.MainWindow)
+                // A hidden window shows nothing, so drawing it is pure cost
+                if (root.Window != _clyde.MainWindow && root.Window.IsVisible)
                 {
                     using var _ = _prof.Group("Window");
                     _prof.WriteValue("ID", ProfData.Int32((int) root.Window.Id));
