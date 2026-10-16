@@ -775,6 +775,18 @@ namespace Robust.Client
         }
 
 
+        public int ContentMaxFps
+        {
+            get => _contentMaxFps;
+            set
+            {
+                _contentMaxFps = Math.Clamp(value, 0, 10_000);
+                UpdateVsyncConfig();
+            }
+        }
+
+        private int _contentMaxFps;
+
         private void UpdateVsyncConfig()
         {
             if (_displayMode == DisplayMode.Headless)
@@ -788,7 +800,13 @@ namespace Robust.Client
             if (_mainLoop == null)
                 return;
 
-            if (vsync || maxFps == 0)
+            if (_contentMaxFps > 0)
+            {
+                // Sleeping to the cap also keeps vsync from spinning a core in the driver's swap wait
+                _mainLoop.SleepMode = SleepMode.Limit;
+                _mainLoop.LimitMinFrameTime = TimeSpan.FromSeconds(1.0 / _contentMaxFps);
+            }
+            else if (vsync || maxFps == 0)
             {
                 _mainLoop.SleepMode = SleepMode.None;
             }

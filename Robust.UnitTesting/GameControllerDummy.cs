@@ -10,6 +10,8 @@ namespace Robust.UnitTesting
     internal sealed class GameControllerDummy : IGameControllerInternal
     {
         public InitialLaunchState LaunchState { get; } = new(false, null, null, null);
+
+        public int ContentMaxFps { get; set; }
         public GameControllerOptions Options { get; } = new();
         public bool ContentStart { get; set; }
         public StartType StartTypeValue => ContentStart ? StartType.Content : StartType.Engine;

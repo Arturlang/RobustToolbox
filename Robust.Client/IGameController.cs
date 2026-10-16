@@ -12,6 +12,13 @@ public interface IGameController
     void Shutdown(string? reason=null);
 
     /// <summary>
+    ///     A frame rate cap set by content, e.g. a game asking for a client frame rate. Applies even with vsync on,
+    ///     and takes precedence over <see cref="CVars.DisplayMaxFPS"/> without touching the user's setting.
+    ///     0 for no content cap.
+    /// </summary>
+    int ContentMaxFps { get; set; }
+
+    /// <summary>
     ///     Try to cause the launcher to either reconnect to the same server or connect to a new server.
     ///     *The engine will shutdown on success.*
     ///     Will throw an exception if contacting the launcher failed (success indicates it is now the launcher's responsibility).
